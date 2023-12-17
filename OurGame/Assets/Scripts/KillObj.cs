@@ -14,15 +14,16 @@ public class KillObj : MonoBehaviour
     // Update is called once per frame
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.name=="Player")
         {
             Die();
         }
     }
     private void Die()
     {
-        anim.SetTrigger("death");
-        // change this later
+        
+        Destroy(gameObject);
+        Debug.Log("destroyedObject");
         
     }
 }

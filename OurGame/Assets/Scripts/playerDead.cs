@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class playerDead : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator anim;
+    private playerMovement pm;
     
     // Start is called before the first frame update
     private void Start()
     {
         anim  = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        
     }
 
     // Update is called once per frame
@@ -19,6 +23,11 @@ public class playerDead : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Trap"))
         {
+            rb.velocity = new Vector2(rb.velocity.x, 7f);
+        }
+        else if (collision.gameObject.CompareTag("Enemy"))
+        {
+            
             Die();
            
             Debug.Log("dead");
@@ -29,5 +38,8 @@ public class playerDead : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Static;
         anim.SetTrigger("death");
     }
-    
+    private void Restartlevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }

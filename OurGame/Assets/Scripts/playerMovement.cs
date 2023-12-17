@@ -19,6 +19,9 @@ public class playerMovement : MonoBehaviour
     private float dirx = 0f;
     public bool IsDead = false;
 
+    private enum MovementState { idle, running, jumping, falling }
+    
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,9 +34,10 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
-        
-            if (Input.GetButtonDown("Jump") && IsGrounded())
+        float dirx = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(dirx * MoveSpeed, rb.velocity.y);
+
+        if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, JumpHight);
                 Doublejump = 1f;
@@ -54,23 +58,32 @@ public class playerMovement : MonoBehaviour
 
     private void AnimatorUpdator()
     {
-        float dirx = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(dirx * MoveSpeed, rb.velocity.y);
+        MovementState state;
+        
 
-        if (dirx > 0f)
+        if (rb.velocity.x > 0f)
         {
-            anim.SetBool("Running", true);
+            state = MovementState.running;
             sprite.flipX = false;
         }
-        else if (dirx < 0f)
+        else if (rb.velocity.x < 0f)
         {
-            anim.SetBool("Running", true);
+            state = MovementState.running;
             sprite.flipX = true;
         }
         else
         {
-            anim.SetBool("Running", false);
+            state = MovementState.idle;
         }
+
+        if (rb.velocity.y > .1f)
+        {
+            state = MovementState.jumping;
+        } else if (rb.velocity.y < -.1f)
+        {
+            state = MovementState.falling;
+        }
+        anim.SetInteger("state", (int)state);
     }
     private bool IsGrounded()
     {
